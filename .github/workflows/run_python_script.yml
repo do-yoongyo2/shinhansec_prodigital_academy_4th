@@ -1,0 +1,39 @@
+name: Run Python Script and Commit File
+
+on:
+    workflow_dispatch:
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v2
+              with:
+                  persist-credentials: false
+
+            - name: Set up Python
+              uses: actions/setup-python@v2
+              with:
+                  python-version: "3.x"
+
+            - name: Install dependencies
+              run: |
+                  python -m pip install --upgrade pip
+                  pip install requests
+
+            - name: Run script
+              run: python crawl_naver.py
+
+            - name: Commit file
+              run: |
+                  git config --local user.name 'do-yoongyo2'
+                  git config --local user.email 'do.yoongyo2@gmail.com'
+                  git add naver.txt
+                  git commit -m "Add naver.txt"
+            - name: Push
+              uses: ad-m/github-push-action@master
+              with:
+                  branch: "main"
+                  github_token: ${{ secrets.YOON_TOKEN }}
